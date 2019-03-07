@@ -1,65 +1,61 @@
 <template>
-  <canvas id="app"></canvas>
+  <div id="app">
+  </div>
 </template>
 
 <script>
-import { Deck } from '@deck.gl/core'
-import { GeoJsonLayer } from '@deck.gl/layers'
+import { MapboxLayer } from '@deck.gl/mapbox'
+import { ScatterplotLayer } from '@deck.gl/layers'
+import mapboxgl from 'mapbox-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 export default {
   name: 'app',
   data () {
-    return {
-      deck: ''
-    }
+    return {}
   },
   methods: {
-    deck_geojson: function () {
-      const GEOJSON =
-        'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_admin_1_states_provinces_shp.geojson'
-      const INITIAL_VIEW_STATE = {
-        latitude: 35,
-        longitude: -115,
-        zoom: 3,
-        bearing: 30,
-        pitch: 30
-      }
-      this.deck = new Deck({
-        canvas: 'app',
-        initialViewState: INITIAL_VIEW_STATE,
-        controller: true,
-        layers: [
-          new GeoJsonLayer({
-            visible: true,
-            data: GEOJSON,
-            stroked: true,
-            filled: true,
-            lineWidthMinPixels: 2,
-            opacity: 0.4,
-            getLineColor: () => [255, 100, 100],
-            getFillColor: () => [200, 160, 0, 180]
-          })
-        ]
+    deck_geojson_mapboxgl: function () {
+      mapboxgl.accessToken = 'pk.eyJ1IjoidWJlcmRhdGEiLCJhIjoiY2pudzRtaWloMDAzcTN2bzN1aXdxZHB5bSJ9.2bkj3IiRC8wj3jLThvDGdA'
+
+      const map = new mapboxgl.Map({
+        container: 'app',
+        style: 'mapbox://styles/mapbox/light-v9',
+        center: [-74.50, 40],
+        zoom: 9
+      })
+
+      const myDeckLayer = new MapboxLayer({
+        id: 'my-scatterplot',
+        type: ScatterplotLayer,
+        data: [
+          { position: [-74.5, 40], size: 10000 }
+        ],
+        getPosition: d => d.position,
+        getRadius: d => d.size,
+        getFillColor: [255, 0, 0],
+        getLineColor: [0, 0, 0]
+      })
+
+      map.on('load', () => {
+        map.addLayer(myDeckLayer, 'waterway-label')
       })
     },
     deckInit: function () {
-      this.deck_geojson()
-    },
-    deckDestory () {
-      this.deck.finalize()
+      this.deck_geojson_mapboxgl()
     }
   },
   mounted () {
     this.deckInit()
   },
-  beforeDestroy () {
-    this.deckDestory()
-  }
+  beforeDestroy () {}
 }
 </script>
 
 <style>
-body {
+html,body,#app {
   margin: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>
