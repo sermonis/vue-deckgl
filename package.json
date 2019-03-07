@@ -10,7 +10,9 @@
   "dependencies": {
     "vue": "^2.6.6",
     "@deck.gl/core": "^6.4.5",
-    "@deck.gl/layers": "^6.4.5"
+    "@deck.gl/layers": "^6.4.5",
+    "@deck.gl/mapbox": "^6.4.5",
+    "mapbox-gl": "^0.53.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.4.0",
